@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Fantasosa — Festa di Tommy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#ffffff;
+  --off:#f9f7f2;
+  --black:#1a1a1a;
+  --gray:#888;
+  --border:#e8e4dc;
+  --orange:#E8650A;
+  --orange-light:#fef0e6;
+  --orange-dark:#b34d06;
+  --green:#3B6D11;
+  --green-light:#eaf3de;
+  --red:#A32D2D;
+  --red-light:#fcebeb;
+  --blue:#185FA5;
+  --blue-light:#e6f1fb;
+  --pink-light:#fbeaf0;
+  --pink-dark:#72243E;
+  --radius:10px;
+}
+html,body{height:100%;background:var(--off);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--black)}
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+
+/* WELCOME */
+#s-welcome{align-items:center;justify-content:center;padding:2rem 1.5rem;text-align:center;background:var(--white)}
+.welcome-badge{display:inline-block;background:var(--orange-light);color:var(--orange-dark);font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:1.5rem}
+.welcome-title{font-size:40px;font-weight:700;letter-spacing:-1.5px;color:var(--black);line-height:1.1;margin-bottom:0.5rem}
+.welcome-title span{color:var(--orange)}
+.welcome-sub{font-size:15px;color:var(--gray);margin-bottom:2.5rem;line-height:1.5}
+.welcome-card{background:var(--off);border-radius:16px;padding:1.5rem;width:100%;max-width:360px;text-align:left}
+.welcome-card label{font-size:11px;font-weight:700;color:var(--gray);display:block;margin-bottom:8px;letter-spacing:0.06em;text-transform:uppercase}
+.welcome-card input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:16px;background:var(--white);color:var(--black);outline:none;margin-bottom:1.25rem}
+.welcome-card input:focus{border-color:var(--orange)}
+.divider{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
+.divider-line{flex:1;height:1px;background:var(--border)}
+.divider-text{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+.target-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:1.25rem;display:flex;align-items:center;gap:10px}
+.target-icon{font-size:20px}
+.target-name{font-size:16px;font-weight:600;color:var(--black);flex:1}
+.target-label{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-weight:700}
+.start-btn{width:100%;padding:14px;background:var(--orange);border:none;border-radius:var(--radius);font-size:16px;font-weight:600;color:var(--white);cursor:pointer}
+.start-btn:active{background:var(--orange-dark)}
+.start-btn:disabled{background:var(--border);color:var(--gray);cursor:default}
+
+/* GAME HEADER */
+.game-header{background:var(--white);border-bottom:1px solid var(--border);padding:1rem 1rem 0;position:sticky;top:0;z-index:10}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
+.header-logo{font-size:20px;font-weight:700;letter-spacing:-0.5px;color:var(--black)}
+.header-logo span{color:var(--orange)}
+.header-right{text-align:right}
+.score-num{font-size:28px;font-weight:700;line-height:1;color:var(--black)}
+.score-num.pos{color:var(--green)}
+.score-num.neg{color:var(--red)}
+.score-sub{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:0.05em}
+.tabs{display:flex}
+.tab{flex:1;padding:10px 0;font-size:14px;font-weight:500;color:var(--gray);background:transparent;border:none;border-bottom:2.5px solid transparent;cursor:pointer;text-align:center;transition:all 0.15s}
+.tab.on{color:var(--orange);border-bottom-color:var(--orange)}
+
+/* TARGET BANNER */
+.target-banner{background:var(--orange-light);border-bottom:1px solid #fddcc4;padding:0.6rem 1rem;display:flex;align-items:center;gap:8px}
+.target-banner-label{font-size:11px;color:var(--orange-dark);text-transform:uppercase;letter-spacing:0.06em;font-weight:700}
+.target-banner-name{font-size:14px;font-weight:700;color:var(--orange-dark)}
+
+/* ACTIONS */
+#view-azioni{flex:1;padding-bottom:2rem}
+.progress-wrap{padding:0.75rem 1rem;background:var(--white);border-bottom:1px solid var(--border)}
+.progress-row{display:flex;justify-content:space-between;font-size:12px;color:var(--gray);margin-bottom:6px}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--orange);border-radius:2px;transition:width 0.3s}
+.sect-head{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:0.08em;text-transform:uppercase;padding:1.25rem 1rem 0.4rem;display:flex;align-items:center;gap:8px}
+.sect-count{font-size:11px;background:var(--off);color:var(--gray);border-radius:10px;padding:2px 7px;border:1px solid var(--border)}
+.action-item{display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;background:var(--white);border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.1s}
+.action-item:active{background:var(--off)}
+.action-item.done{background:#f6fbf2}
+.action-item.done .action-label{color:var(--gray)}
+.action-item.malus.done{background:#fff8f8}
+.check-circle{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.action-item.done .check-circle{background:var(--green);border-color:var(--green)}
+.action-item.malus .check-circle{border-color:#e8b4b4}
+.action-item.malus.done .check-circle{background:var(--red);border-color:var(--red)}
+.checkmark{display:none;width:12px;height:12px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.action-item.done .checkmark{display:block}
+.action-content{flex:1;min-width:0}
+.action-label{font-size:14px;color:var(--black);line-height:1.4}
+.badges{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;letter-spacing:0.02em}
+.badge-all{background:var(--blue-light);color:var(--blue)}
+.badge-f{background:var(--pink-light);color:var(--pink-dark)}
+.badge-m{background:#e8f0fb;color:#0C447C}
+.pts-tag{font-size:13px;font-weight:700;white-space:nowrap;min-width:36px;text-align:right}
+.pts-pos{color:var(--green)}
+.pts-neg{color:var(--red)}
+.pts-all{color:var(--blue)}
+
+/* LEADERBOARD */
+#view-classifica{flex:1;padding:1rem;padding-bottom:2rem;display:none;flex-direction:column;gap:12px}
+.lb-card{background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.lb-row{display:flex;align-items:center;gap:12px;padding:0.85rem 1rem;border-bottom:1px solid var(--border)}
+.lb-row:last-child{border-bottom:none}
+.lb-row.me{background:var(--orange-light)}
+.lb-rank{font-size:15px;font-weight:700;width:28px;text-align:center;color:var(--gray)}
+.lb-row.gold .lb-rank{color:#B8860B}
+.lb-row.silver .lb-rank{color:#888}
+.lb-row.bronze .lb-rank{color:#8B5A2B}
+.lb-names{flex:1}
+.lb-name{font-size:14px;font-weight:600;color:var(--black)}
+.lb-target{font-size:11px;color:var(--gray);margin-top:1px}
+.lb-row.me .lb-name{color:var(--orange-dark)}
+.lb-row.me .lb-target{color:var(--orange)}
+.lb-pts{font-size:15px;font-weight:700;color:var(--black);text-align:right}
+.lb-row.me .lb-pts{color:var(--orange-dark)}
+.lb-az{font-size:11px;color:var(--gray);text-align:right}
+.lb-note{font-size:12px;color:var(--gray);text-align:center;line-height:1.5;padding:0.5rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--black);color:var(--white);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div id="s-welcome" class="screen active">
+  <div class="welcome-badge">Festa di laurea · luglio 2026</div>
+  <div class="welcome-title">Fanta<span>sosa</span></div>
+  <div class="welcome-sub">Spunta le azioni di chi hai pescato.<br>Vince chi ne fa di più!</div>
+  <div class="welcome-card">
+    <label>Il tuo nome</label>
+    <input type="text" id="name-in" placeholder="Es. Edoardo" maxlength="25" autocomplete="off" />
+    <div class="divider"><div class="divider-line"></div><div class="divider-text">valuti</div><div class="divider-line"></div></div>
+    <div class="target-label">Chi hai pescato</div>
+    <input type="text" id="target-in" placeholder="Es. Giulia" maxlength="25" autocomplete="off" />
+    <button class="start-btn" onclick="startGame()">Inizia la sfida</button>
+    <button onclick="resetAll()" style="width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--gray);cursor:pointer;">Azzera tutti i dati (solo per test)</button>
+  </div>
+</div>
+
+<div id="s-game" class="screen">
+  <div class="game-header">
+    <div class="header-top">
+      <div>
+        <div class="header-logo">Fanta<span>sosa</span></div>
+        <div style="font-size:13px;color:var(--gray);margin-top:2px" id="player-label"></div>
+      </div>
+      <div class="header-right">
+        <div class="score-num" id="score-display">0</div>
+        <div class="score-sub">punti</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab on" id="tab-azioni" onclick="showTab('azioni')">Azioni</button>
+      <button class="tab" id="tab-classifica" onclick="showTab('classifica')">Classifica</button>
+    </div>
+  </div>
+  <div class="target-banner">
+    <div class="target-banner-label">Le azioni di →</div>
+    <div class="target-banner-name" id="target-banner-name"></div>
+  </div>
+
+  <div id="view-azioni">
+    <div class="progress-wrap">
+      <div class="progress-row">
+        <span id="prog-text">0 azioni completate</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div id="view-classifica"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS = [
+  {id:'arrivo', label:'Outfit & arrivo',               icon:'🎽'},
+  {id:'foto',   label:'Foto & selfie',                 icon:'📸'},
+  {id:'micro',  label:'Microfono & momenti epici',     icon:'🎤'},
+  {id:'perso',  label:'Interazioni con i personaggi',  icon:'🤝'},
+  {id:'sfide',  label:'Sfide & prove',                 icon:'🎯'},
+  {id:'malus',  label:'Malus',                         icon:'⚠️'},
+];
+
+const ACTIONS = [
+  // OUTFIT & ARRIVO (8)
+  {id:'a01',cat:'arrivo',label:'Outfit total white',pts:10},
+  {id:'a02',cat:'arrivo',label:'Tocco colorato (arancio / rosso / giallo)',pts:15},
+  {id:'a03',cat:'arrivo',label:'Imposta Tommy come sfondo del telefono',pts:10},
+  {id:'a04',cat:'arrivo',label:'Arriva in carsharing',pts:3},
+  {id:'a05',cat:'arrivo',label:'Arriva in carsharing con sconosciuti',pts:5},
+  {id:'a06',cat:'arrivo',label:'Balla con uno/a sconosciuto (approvato da Tommy)',pts:5},
+  {id:'a07',cat:'arrivo',label:'Incolla l\'adesivo su un posto visibile',pts:3},
+  {id:'a08',cat:'arrivo',label:'Arriva alla fine della serata con l\'adesivo ancora attaccato',pts:5},
+
+  // FOTO & SELFIE (10)
+  {id:'b01',cat:'foto',label:'Storia IG taggando Tommy',pts:10},
+  {id:'b02',cat:'foto',label:'Post su Instagram dalla festa',pts:5},
+  {id:'b03',cat:'foto',label:'Foto con la nonna',pts:20},
+  {id:'b04',cat:'foto',label:'Foto brutta al festeggiato',pts:1},
+  {id:'b05',cat:'foto',label:'Foto con Marita e Roberto',pts:5},
+  {id:'b06',cat:'foto',label:'Selfie con Roberto (solo donne)',pts:5,onlyF:true},
+  {id:'b07',cat:'foto',label:'Selfie con Marita (solo maschi)',pts:5,onlyM:true},
+  {id:'b08',cat:'foto',label:'Foto abbracciato a Tommy',pts:5},
+  {id:'b09',cat:'foto',label:'Scrivi una dedica sulla tela',pts:3},
+  {id:'b10',cat:'foto',label:'Manda un video a un invitato assente insultandolo',pts:5},
+
+  // MICROFONO & MOMENTI EPICI (11)
+  {id:'c01',cat:'micro',label:'Lancia il coro',pts:5},
+  {id:'c02',cat:'micro',label:'Lancia il brindisi',pts:10},
+  {id:'c03',cat:'micro',label:'Prende il microfono e canta una canzone',pts:20},
+  {id:'c04',cat:'micro',label:'Fai la viking row',pts:5},
+  {id:'c05',cat:'micro',label:'Discorso imbarazzante su Tommy',pts:10},
+  {id:'c06',cat:'micro',label:'Far fare la lacrimuccia a Tommy',pts:20},
+  {id:'c07',cat:'micro',label:'Fai un "preferiresti" al microfono',pts:5},
+  {id:'c08',cat:'micro',label:'La Bea annuncia sconto gelato 10% al microfono',pts:3,forAll:true},
+  {id:'c09',cat:'micro',label:'La Marghe annuncia sconto pesse 10% al microfono',pts:3,forAll:true},
+  {id:'c10',cat:'micro',label:'Tommy ti cita per nome nel discorso',pts:10},
+  {id:'c11',cat:'micro',label:'Balla con Tommy',pts:8},
+
+  // INTERAZIONI PERSONAGGI (14)
+  {id:'d01',cat:'perso',label:'Shot con Simoneau',pts:10},
+  {id:'d02',cat:'perso',label:'Bevi con il festeggiato',pts:3},
+  {id:'d03',cat:'perso',label:'Complimentati con Elia per il fantacalcio',pts:2},
+  {id:'d04',cat:'perso',label:'Dì "Pepe Reina" toccando la testa allo zio Luca',pts:15},
+  {id:'d05',cat:'perso',label:'Chiedi un autografo a Loschi (Alberto Paloschi)',pts:1},
+  {id:'d06',cat:'perso',label:'Mia ti batte il cinque',pts:1},
+  {id:'d07',cat:'perso',label:'Parla in ciosoto con Asia',pts:3},
+  {id:'d08',cat:'perso',label:'Accarezza la barba di Pippide',pts:5},
+  {id:'d09',cat:'perso',label:'Farsi ammanettare dal poliziotto Marin (solo donne)',pts:5,onlyF:true},
+  {id:'d10',cat:'perso',label:'Sansone ti morde',pts:3},
+  {id:'d11',cat:'perso',label:'Tratta con Edoardo Genete',pts:1},
+  {id:'d12',cat:'perso',label:'Fai innamorare Ricky (solo donne)',pts:10,onlyF:true},
+  {id:'d13',cat:'perso',label:'Fai abbaiare Damiano',pts:15},
+  {id:'d14',cat:'perso',label:'Crea una coppia',pts:20},
+
+  // SFIDE & PROVE (8)
+  {id:'e01',cat:'sfide',label:'Indovina la canzone',pts:3},
+  {id:'e02',cat:'sfide',label:'Indovina l\'anno di nascita della nonna',pts:5},
+  {id:'e03',cat:'sfide',label:'Giovanni spiega la Lagrangiana',pts:5,forAll:true},
+  {id:'e04',cat:'sfide',label:'Lo squalo fa la mossa',pts:3,forAll:true},
+  {id:'e05',cat:'sfide',label:'Tocca il bicipite di Albiferronato',pts:1},
+  {id:'e06',cat:'sfide',label:'Chiedi alla Giorgia Biz cosa fa un consulente finanziario',pts:1},
+  {id:'e07',cat:'sfide',label:'Recita il titolo della tesi di Tommy',pts:3},
+  {id:'e08',cat:'sfide',label:'Nomina il nome della facoltà di Tommy',pts:2},
+
+  // MALUS (14)
+  {id:'f01',cat:'malus',label:'Outfit non bianco',pts:-15,malus:true},
+  {id:'f02',cat:'malus',label:'Outfit bianco ma senza tocchi colorati',pts:-1,malus:true},
+  {id:'f03',cat:'malus',label:'Arriva dopo le 21:00',pts:-5,malus:true},
+  {id:'f04',cat:'malus',label:'Si macchia',pts:-5,malus:true},
+  {id:'f05',cat:'malus',label:'Bicchiere pieno',pts:-5,malus:true},
+  {id:'f06',cat:'malus',label:'Cita i nomi delle ex',pts:-5,malus:true},
+  {id:'f07',cat:'malus',label:'Non sa il titolo della tesi',pts:-1,malus:true},
+  {id:'f08',cat:'malus',label:'Non sa il nome della facoltà',pts:-1,malus:true},
+  {id:'f09',cat:'malus',label:'Non mangia il tiramisù della Marita',pts:-10,malus:true},
+  {id:'f10',cat:'malus',label:'Sgamato a scrollare LinkedIn o mail',pts:-5,malus:true},
+  {id:'f11',cat:'malus',label:'Va via prima di mezzanotte',pts:-10,malus:true},
+  {id:'f12',cat:'malus',label:'Non guida e si rifiuta di bere',pts:-3,malus:true},
+  {id:'f13',cat:'malus',label:'Fuma',pts:-3,malus:true},
+  {id:'f14',cat:'malus',label:'Sta seduto per troppo tempo (a discrezione)',pts:-3,malus:true},
+];
+
+let playerName='', targetName='', done=new Set();
+
+function startGame(){
+  const n=document.getElementById('name-in').value.trim();
+  const t=document.getElementById('target-in').value.trim();
+  if(!n){showToast('Inserisci il tuo nome!');return;}
+  if(!t){showToast('Inserisci il nome di chi valuti!');return;}
+  playerName=n; targetName=t;
+  const saved=loadState();
+  if(saved){done=new Set(saved.done);}
+  registerPlayer();
+  document.getElementById('player-label').textContent='Ciao, '+playerName+'!';
+  document.getElementById('target-banner-name').textContent=targetName;
+  document.getElementById('s-welcome').classList.remove('active');
+  document.getElementById('s-game').classList.add('active');
+  renderActions();
+  updateScore();
+}
+
+function calcScore(doneSet){
+  return ACTIONS.filter(a=>doneSet.has(a.id)).reduce((s,a)=>s+a.pts,0);
+}
+
+function renderActions(){
+  const container=document.getElementById('view-azioni');
+  const progressWrap=container.querySelector('.progress-wrap');
+  container.innerHTML='';
+  container.appendChild(progressWrap);
+  const totalPos=ACTIONS.filter(a=>!a.malus).length;
+  const donePos=ACTIONS.filter(a=>!a.malus&&done.has(a.id)).length;
+  document.getElementById('prog-text').textContent=donePos+' azioni completate';
+  const pct=totalPos?Math.round(donePos/totalPos*100):0;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+
+  CATS.forEach(cat=>{
+    const items=ACTIONS.filter(a=>a.cat===cat.id);
+    if(!items.length)return;
+    const doneInCat=items.filter(a=>done.has(a.id)).length;
+    const head=document.createElement('div');
+    head.className='sect-head';
+    head.innerHTML=cat.icon+' '+cat.label+' <span class="sect-count">'+doneInCat+'/'+items.length+'</span>';
+    container.appendChild(head);
+    items.forEach(a=>{
+      const isDone=done.has(a.id);
+      const div=document.createElement('div');
+      div.className='action-item'+(isDone?' done':'')+(a.malus?' malus':'');
+      div.onclick=()=>toggle(a.id);
+      let badges='';
+      if(a.forAll)badges+='<span class="badge badge-all">per tutti</span>';
+      if(a.onlyF)badges+='<span class="badge badge-f">solo donne</span>';
+      if(a.onlyM)badges+='<span class="badge badge-m">solo maschi</span>';
+      const ptsClass=a.pts<0?'pts-neg':(a.forAll?'pts-all':'pts-pos');
+      const ptsStr=(a.pts>0?'+':'')+a.pts;
+      div.innerHTML=
+        '<div class="check-circle"><svg class="checkmark" viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9.5 10.5,2.5"/></svg></div>'+
+        '<div class="action-content"><div class="action-label">'+a.label+'</div>'+(badges?'<div class="badges">'+badges+'</div>':'')+'</div>'+
+        '<div class="pts-tag '+ptsClass+'">'+ptsStr+'</div>';
+      container.appendChild(div);
+    });
+  });
+}
+
+function toggle(id){
+  if(done.has(id))done.delete(id);else done.add(id);
+  const a=ACTIONS.find(x=>x.id===id);
+  if(a&&done.has(id))showToast((a.pts>0?'+':'')+a.pts+' pt');
+  saveState(); syncPlayer(); updateScore(); renderActions();
+}
+
+function updateScore(){
+  const s=calcScore(done);
+  const el=document.getElementById('score-display');
+  el.textContent=(s>0?'+':'')+s;
+  el.className='score-num'+(s>0?' pos':(s<0?' neg':''));
+}
+
+function showTab(t){
+  document.getElementById('view-azioni').style.display=t==='azioni'?'block':'none';
+  document.getElementById('view-classifica').style.display=t==='classifica'?'flex':'none';
+  document.getElementById('tab-azioni').className='tab'+(t==='azioni'?' on':'');
+  document.getElementById('tab-classifica').className='tab'+(t==='classifica'?' on':'');
+  if(t==='classifica')renderLeaderboard();
+}
+
+function renderLeaderboard(){
+  const el=document.getElementById('view-classifica');
+  el.innerHTML='';
+  const players=loadPlayers();
+  if(!players.length){
+    el.innerHTML='<div class="lb-note">Nessun partecipante ancora.<br>Condividi il link con gli ospiti!</div>';
+    return;
+  }
+  const all=players.map(p=>({
+    name:p.name, target:p.target||'?',
+    score:calcScore(new Set(p.done)),
+    completed:p.done.length,
+    isMe:p.name.toLowerCase()===playerName.toLowerCase()
+  }));
+  all.sort((a,b)=>b.score-a.score);
+  const card=document.createElement('div');
+  card.className='lb-card';
+  const medalClass=['gold','silver','bronze'];
+  const medals=['1°','2°','3°'];
+  all.forEach((p,i)=>{
+    const row=document.createElement('div');
+    row.className='lb-row'+(p.isMe?' me':'')+(i<3?' '+medalClass[i]:'');
+    row.innerHTML=
+      '<div class="lb-rank">'+(medals[i]||i+1+'°')+'</div>'+
+      '<div class="lb-names"><div class="lb-name">'+p.target+'</div><div class="lb-target">valutato da '+p.name+(p.isMe?' (tu)':'')+'</div></div>'+
+      '<div><div class="lb-pts">'+(p.score>0?'+':'')+p.score+'</div><div class="lb-az">'+p.completed+' az.</div></div>';
+    card.appendChild(row);
+  });
+  el.appendChild(card);
+  const note=document.createElement('div');
+  note.className='lb-note';
+  note.textContent='La classifica include tutti gli ospiti che hanno aperto questa pagina.';
+  el.appendChild(note);
+}
+
+function registerPlayer(){
+  const players=loadPlayers();
+  const idx=players.findIndex(p=>p.name.toLowerCase()===playerName.toLowerCase());
+  if(idx<0)players.push({name:playerName,target:targetName,done:[]});
+  savePlayers(players);
+}
+function syncPlayer(){
+  const players=loadPlayers();
+  const idx=players.findIndex(p=>p.name.toLowerCase()===playerName.toLowerCase());
+  if(idx>=0){players[idx].done=Array.from(done);savePlayers(players);}
+}
+function saveState(){try{localStorage.setItem('fs_'+playerName,JSON.stringify({done:Array.from(done),target:targetName}))}catch(e){}}
+function loadState(){try{const d=localStorage.getItem('fs_'+playerName);return d?JSON.parse(d):null}catch(e){return null}}
+function savePlayers(p){try{localStorage.setItem('fs_players',JSON.stringify(p))}catch(e){}}
+function loadPlayers(){try{const d=localStorage.getItem('fs_players');return d?JSON.parse(d):[]}catch(e){return[]}}
+
+function resetAll(){if(confirm("Azzerare tutti i dati?")){localStorage.clear();location.reload();}}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){if(document.getElementById('s-welcome').classList.contains('active'))startGame();}});
+</script>
+</body>
+</html>
